@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package validation
+package vee
 
 import (
 	"context"
@@ -12,10 +12,8 @@ import (
 	"strings"
 )
 
-var (
-	// ErrStructPointer is the error that a struct being validated is not specified as a pointer.
-	ErrStructPointer = errors.New("only a pointer to a struct can be validated")
-)
+// ErrStructPointer is the error that a struct being validated is not specified as a pointer.
+var ErrStructPointer = errors.New("only a pointer to a struct can be validated")
 
 type (
 	// ErrFieldPointer is the error that a field is not specified as a pointer.
@@ -60,14 +58,18 @@ func (e ErrFieldNotFound) Error() string {
 //
 // An error will be returned if validation fails.
 func ValidateStruct(structPtr interface{}, fields ...*FieldRules) error {
-	return ValidateStructWithContext(nil, structPtr, fields...)
+	return ValidateStructWithContext(context.TODO(), structPtr, fields...)
 }
 
 // ValidateStructWithContext validates a struct with the given context.
 // The only difference between ValidateStructWithContext and ValidateStruct is that the former will
 // validate struct fields with the provided context.
 // Please refer to ValidateStruct for the detailed instructions on how to use this function.
-func ValidateStructWithContext(ctx context.Context, structPtr interface{}, fields ...*FieldRules) error {
+func ValidateStructWithContext(
+	ctx context.Context,
+	structPtr interface{},
+	fields ...*FieldRules,
+) error {
 	value := reflect.ValueOf(structPtr)
 	if value.Kind() != reflect.Ptr || !value.IsNil() && value.Elem().Kind() != reflect.Struct {
 		// must be a pointer to a struct

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package validation
+package vee
 
 import (
 	"fmt"
@@ -12,13 +12,25 @@ import (
 
 var (
 	// ErrMinGreaterEqualThanRequired is the error that returns when a value is less than a specified threshold.
-	ErrMinGreaterEqualThanRequired = NewError("validation_min_greater_equal_than_required", "must be no less than {{.threshold}}")
+	ErrMinGreaterEqualThanRequired = NewError(
+		"validation_min_greater_equal_than_required",
+		"must be no less than {{.threshold}}",
+	)
 	// ErrMaxLessEqualThanRequired is the error that returns when a value is greater than a specified threshold.
-	ErrMaxLessEqualThanRequired = NewError("validation_max_less_equal_than_required", "must be no greater than {{.threshold}}")
+	ErrMaxLessEqualThanRequired = NewError(
+		"validation_max_less_equal_than_required",
+		"must be no greater than {{.threshold}}",
+	)
 	// ErrMinGreaterThanRequired is the error that returns when a value is less than or equal to a specified threshold.
-	ErrMinGreaterThanRequired = NewError("validation_min_greater_than_required", "must be greater than {{.threshold}}")
+	ErrMinGreaterThanRequired = NewError(
+		"validation_min_greater_than_required",
+		"must be greater than {{.threshold}}",
+	)
 	// ErrMaxLessThanRequired is the error that returns when a value is greater than or equal to a specified threshold.
-	ErrMaxLessThanRequired = NewError("validation_max_less_than_required", "must be less than {{.threshold}}")
+	ErrMaxLessThanRequired = NewError(
+		"validation_max_less_than_required",
+		"must be less than {{.threshold}}",
+	)
 )
 
 // ThresholdRule is a validation rule that checks if a value satisfies the specified threshold requirement.
@@ -46,7 +58,6 @@ func Min(min interface{}) ThresholdRule {
 		operator:  greaterEqualThan,
 		err:       ErrMinGreaterEqualThanRequired,
 	}
-
 }
 
 // Max returns a validation rule that checks if a value is less or equal than the specified value.
@@ -92,7 +103,12 @@ func (r ThresholdRule) Validate(value interface{}) error {
 			return nil
 		}
 
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+	case reflect.Uint,
+		reflect.Uint8,
+		reflect.Uint16,
+		reflect.Uint32,
+		reflect.Uint64,
+		reflect.Uintptr:
 		v, err := ToUint(value)
 		if err != nil {
 			return err

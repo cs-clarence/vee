@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package validation
+package vee
 
 import (
 	"testing"
@@ -49,9 +49,21 @@ func TestMin(t *testing.T) {
 		// Time cases
 		{"t4.1", date20000601, false, date20000601, ""},
 		{"t4.2", date20000601, false, date20001201, ""},
-		{"t4.3", date20000601, false, date20000101, "must be no less than 2000-06-01 00:00:00 +0000 UTC"},
+		{
+			"t4.3",
+			date20000601,
+			false,
+			date20000101,
+			"must be no less than 2000-06-01 00:00:00 +0000 UTC",
+		},
 		{"t4.4", date20000601, false, date0, ""},
-		{"t4.5", date20000601, true, date20000601, "must be greater than 2000-06-01 00:00:00 +0000 UTC"},
+		{
+			"t4.5",
+			date20000601,
+			true,
+			date20000601,
+			"must be greater than 2000-06-01 00:00:00 +0000 UTC",
+		},
 		{"t4.6", date20000601, true, 1, "cannot convert int to time.Time"},
 		{"t4.7", struct{}{}, false, 1, "type not supported: struct {}"},
 		{"t4.8", date0, false, date20000601, ""},
@@ -113,9 +125,21 @@ func TestMax(t *testing.T) {
 		// Time cases
 		{"t4.1", date20000601, false, date20000601, ""},
 		{"t4.2", date20000601, false, date20000101, ""},
-		{"t4.3", date20000601, false, date20001201, "must be no greater than 2000-06-01 00:00:00 +0000 UTC"},
+		{
+			"t4.3",
+			date20000601,
+			false,
+			date20001201,
+			"must be no greater than 2000-06-01 00:00:00 +0000 UTC",
+		},
 		{"t4.4", date20000601, false, date0, ""},
-		{"t4.5", date20000601, true, date20000601, "must be less than 2000-06-01 00:00:00 +0000 UTC"},
+		{
+			"t4.5",
+			date20000601,
+			true,
+			date20000601,
+			"must be less than 2000-06-01 00:00:00 +0000 UTC",
+		},
 		{"t4.6", date20000601, true, 1, "cannot convert int to time.Time"},
 	}
 

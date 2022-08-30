@@ -3,7 +3,7 @@
 // license that can be found in the LICENSE file.
 
 // Package validation provides configurable and extensible rules for validating data of various types.
-package validation
+package vee
 
 import (
 	"context"

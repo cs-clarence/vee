@@ -1,4 +1,4 @@
-package validation
+package vee
 
 import (
 	"fmt"
@@ -6,7 +6,10 @@ import (
 )
 
 // ErrMultipleOfInvalid is the error that returns when a value is not multiple of a base.
-var ErrMultipleOfInvalid = NewError("validation_multiple_of_invalid", "must be multiple of {{.base}}")
+var ErrMultipleOfInvalid = NewError(
+	"validation_multiple_of_invalid",
+	"must be multiple of {{.base}}",
+)
 
 // MultipleOf returns a validation rule that checks if a value is a multiple of the "base" value.
 // Note that "base" should be of integer type.
@@ -48,7 +51,12 @@ func (r MultipleOfRule) Validate(value interface{}) error {
 			return nil
 		}
 
-	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+	case reflect.Uint,
+		reflect.Uint8,
+		reflect.Uint16,
+		reflect.Uint32,
+		reflect.Uint64,
+		reflect.Uintptr:
 		v, err := ToUint(value)
 		if err != nil {
 			return err

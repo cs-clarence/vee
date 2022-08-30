@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package validation
+package vee
 
 import (
 	"database/sql"
@@ -69,7 +69,13 @@ func TestRuneLength(t *testing.T) {
 		{"t11", 2, 4, sql.NullString{String: "", Valid: true}, ""},
 		{"t12", 2, 4, &sql.NullString{String: "abc", Valid: true}, ""},
 		{"t13", 2, 3, &sql.NullString{String: "💥💥", Valid: true}, ""},
-		{"t14", 2, 3, &sql.NullString{String: "💥", Valid: true}, "the length must be between 2 and 3"},
+		{
+			"t14",
+			2,
+			3,
+			&sql.NullString{String: "💥", Valid: true},
+			"the length must be between 2 and 3",
+		},
 	}
 
 	for _, test := range tests {

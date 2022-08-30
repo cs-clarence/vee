@@ -1,4 +1,4 @@
-package validation
+package vee
 
 import (
 	"context"
@@ -9,7 +9,15 @@ import (
 
 func TestMap(t *testing.T) {
 	var m0 map[string]interface{}
-	m1 := map[string]interface{}{"A": "abc", "B": "xyz", "c": "abc", "D": (*string)(nil), "F": (*String123)(nil), "H": []string{"abc", "abc"}, "I": map[string]string{"foo": "abc"}}
+	m1 := map[string]interface{}{
+		"A": "abc",
+		"B": "xyz",
+		"c": "abc",
+		"D": (*string)(nil),
+		"F": (*String123)(nil),
+		"H": []string{"abc", "abc"},
+		"I": map[string]string{"foo": "abc"},
+	}
 	m2 := map[string]interface{}{"E": String123("xyz"), "F": (*String123)(nil)}
 	m3 := map[string]interface{}{"M3": Model3{}}
 	m4 := map[string]interface{}{"M3": Model3{A: "abc"}}
@@ -26,14 +34,39 @@ func TestMap(t *testing.T) {
 		{"t1.2", m1, []*KeyRules{Key("A"), Key("B")}, ""},
 		// normal rules
 		{"t2.1", m1, []*KeyRules{Key("A", &validateAbc{}), Key("B", &validateXyz{})}, ""},
-		{"t2.2", m1, []*KeyRules{Key("A", &validateXyz{}), Key("B", &validateAbc{})}, "A: error xyz; B: error abc."},
-		{"t2.3", m1, []*KeyRules{Key("A", &validateXyz{}), Key("c", &validateXyz{})}, "A: error xyz; c: error xyz."},
+		{
+			"t2.2",
+			m1,
+			[]*KeyRules{Key("A", &validateXyz{}), Key("B", &validateAbc{})},
+			"A: error xyz; B: error abc.",
+		},
+		{
+			"t2.3",
+			m1,
+			[]*KeyRules{Key("A", &validateXyz{}), Key("c", &validateXyz{})},
+			"A: error xyz; c: error xyz.",
+		},
 		{"t2.4", m1, []*KeyRules{Key("D", Length(0, 5))}, ""},
 		{"t2.5", m1, []*KeyRules{Key("F", Length(0, 5))}, ""},
-		{"t2.6", m1, []*KeyRules{Key("H", Each(&validateAbc{})), Key("I", Each(&validateAbc{}))}, ""},
-		{"t2.7", m1, []*KeyRules{Key("H", Each(&validateXyz{})), Key("I", Each(&validateXyz{}))}, "H: (0: error xyz; 1: error xyz.); I: (foo: error xyz.)."},
+		{
+			"t2.6",
+			m1,
+			[]*KeyRules{Key("H", Each(&validateAbc{})), Key("I", Each(&validateAbc{}))},
+			"",
+		},
+		{
+			"t2.7",
+			m1,
+			[]*KeyRules{Key("H", Each(&validateXyz{})), Key("I", Each(&validateXyz{}))},
+			"H: (0: error xyz; 1: error xyz.); I: (foo: error xyz.).",
+		},
 		{"t2.8", m1, []*KeyRules{Key("I", Map(Key("foo", &validateAbc{})))}, ""},
-		{"t2.9", m1, []*KeyRules{Key("I", Map(Key("foo", &validateXyz{})))}, "I: (foo: error xyz.)."},
+		{
+			"t2.9",
+			m1,
+			[]*KeyRules{Key("I", Map(Key("foo", &validateXyz{})))},
+			"I: (foo: error xyz.).",
+		},
 		// non-map value
 		{"t3.1", &m1, []*KeyRules{}, ""},
 		{"t3.2", nil, []*KeyRules{}, ErrNotMap.Error()},
@@ -46,7 +79,12 @@ func TestMap(t *testing.T) {
 		{"t4.3", m1, []*KeyRules{Key("X").Optional()}, ""},
 		// non-string keys
 		{"t5.1", m6, []*KeyRules{Key(11, &validateAbc{}), Key(22, &validateXyz{})}, ""},
-		{"t5.2", m6, []*KeyRules{Key(11, &validateXyz{}), Key(22, &validateAbc{})}, "11: error xyz; 22: error abc."},
+		{
+			"t5.2",
+			m6,
+			[]*KeyRules{Key(11, &validateXyz{}), Key(22, &validateAbc{})},
+			"11: error xyz; 22: error abc.",
+		},
 		// validatable value
 		{"t6.1", m2, []*KeyRules{Key("E")}, "E: error 123."},
 		{"t6.2", m2, []*KeyRules{Key("E", Skip)}, ""},
@@ -66,11 +104,24 @@ func TestMap(t *testing.T) {
 		{"t8.2", m3, []*KeyRules{Key("M3")}, "M3: (A: error abc.)."},
 		{"t8.3", m4, []*KeyRules{Key("M3")}, ""},
 		// internal error
-		{"t9.1", m5, []*KeyRules{Key("A", &validateAbc{}), Key("B", Required), Key("A", &validateInternalError{})}, "error internal"},
+		{
+			"t9.1",
+			m5,
+			[]*KeyRules{
+				Key("A", &validateAbc{}),
+				Key("B", Required),
+				Key("A", &validateInternalError{}),
+			},
+			"error internal",
+		},
 	}
 	for _, test := range tests {
 		err1 := Validate(test.model, Map(test.rules...).AllowExtraKeys())
-		err2 := ValidateWithContext(context.Background(), test.model, Map(test.rules...).AllowExtraKeys())
+		err2 := ValidateWithContext(
+			context.Background(),
+			test.model,
+			Map(test.rules...).AllowExtraKeys(),
+		)
 		assertError(t, test.err, err1, test.tag)
 		assertError(t, test.err, err2, test.tag)
 	}
@@ -80,7 +131,11 @@ func TestMap(t *testing.T) {
 		Key("Name", Required),
 		Key("Value", Required, Length(5, 10)),
 	))
-	assert.EqualError(t, err, "Extra: key not expected; Value: the length must be between 5 and 10.")
+	assert.EqualError(
+		t,
+		err,
+		"Extra: key not expected; Value: the length must be between 5 and 10.",
+	)
 }
 
 func TestMapWithContext(t *testing.T) {
@@ -93,18 +148,46 @@ func TestMapWithContext(t *testing.T) {
 		err   string
 	}{
 		// normal rules
-		{"t1.1", m1, []*KeyRules{Key("A", &validateContextAbc{}), Key("B", &validateContextXyz{})}, ""},
-		{"t1.2", m1, []*KeyRules{Key("A", &validateContextXyz{}), Key("B", &validateContextAbc{})}, "A: error xyz; B: error abc."},
-		{"t1.3", m1, []*KeyRules{Key("A", &validateContextXyz{}), Key("c", &validateContextXyz{})}, "A: error xyz; c: error xyz."},
+		{
+			"t1.1",
+			m1,
+			[]*KeyRules{Key("A", &validateContextAbc{}), Key("B", &validateContextXyz{})},
+			"",
+		},
+		{
+			"t1.2",
+			m1,
+			[]*KeyRules{Key("A", &validateContextXyz{}), Key("B", &validateContextAbc{})},
+			"A: error xyz; B: error abc.",
+		},
+		{
+			"t1.3",
+			m1,
+			[]*KeyRules{Key("A", &validateContextXyz{}), Key("c", &validateContextXyz{})},
+			"A: error xyz; c: error xyz.",
+		},
 		{"t1.4", m1, []*KeyRules{Key("g", &validateContextAbc{})}, "g: error abc."},
 		// skip rule
 		{"t2.1", m1, []*KeyRules{Key("g", Skip, &validateContextAbc{})}, ""},
 		{"t2.2", m1, []*KeyRules{Key("g", &validateContextAbc{}, Skip)}, "g: error abc."},
 		// internal error
-		{"t3.1", m2, []*KeyRules{Key("A", &validateContextAbc{}), Key("B", Required), Key("A", &validateInternalError{})}, "error internal"},
+		{
+			"t3.1",
+			m2,
+			[]*KeyRules{
+				Key("A", &validateContextAbc{}),
+				Key("B", Required),
+				Key("A", &validateInternalError{}),
+			},
+			"error internal",
+		},
 	}
 	for _, test := range tests {
-		err := ValidateWithContext(context.Background(), test.model, Map(test.rules...).AllowExtraKeys())
+		err := ValidateWithContext(
+			context.Background(),
+			test.model,
+			Map(test.rules...).AllowExtraKeys(),
+		)
 		assertError(t, test.err, err, test.tag)
 	}
 
@@ -114,6 +197,10 @@ func TestMapWithContext(t *testing.T) {
 		Key("Value", Required, Length(5, 10)),
 	))
 	if assert.NotNil(t, err) {
-		assert.Equal(t, "Extra: key not expected; Value: the length must be between 5 and 10.", err.Error())
+		assert.Equal(
+			t,
+			"Extra: key not expected; Value: the length must be between 5 and 10.",
+			err.Error(),
+		)
 	}
 }

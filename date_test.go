@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package validation
+package vee
 
 import (
 	"testing"
@@ -78,7 +78,10 @@ func TestDateRule_MinMax(t *testing.T) {
 	r = r.Max(time.Now())
 	assert.False(t, r.max.IsZero())
 
-	r2 := Date("2006-01-02").Min(time.Date(2000, 12, 1, 0, 0, 0, 0, time.UTC)).Max(time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC))
+	r2 := Date(
+		"2006-01-02",
+	).Min(time.Date(2000, 12, 1, 0, 0, 0, 0, time.UTC)).
+		Max(time.Date(2020, 2, 1, 0, 0, 0, 0, time.UTC))
 	assert.Nil(t, r2.Validate("2010-01-02"))
 	err := r2.Validate("1999-01-02")
 	if assert.NotNil(t, err) {

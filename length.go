@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package validation
+package vee
 
 import (
 	"unicode/utf8"
@@ -10,13 +10,22 @@ import (
 
 var (
 	// ErrLengthTooLong is the error that returns in case of too long length.
-	ErrLengthTooLong = NewError("validation_length_too_long", "the length must be no more than {{.max}}")
+	ErrLengthTooLong = NewError(
+		"validation_length_too_long",
+		"the length must be no more than {{.max}}",
+	)
 	// ErrLengthTooShort is the error that returns in case of too short length.
-	ErrLengthTooShort = NewError("validation_length_too_short", "the length must be no less than {{.min}}")
+	ErrLengthTooShort = NewError(
+		"validation_length_too_short",
+		"the length must be no less than {{.min}}",
+	)
 	// ErrLengthInvalid is the error that returns in case of an invalid length.
 	ErrLengthInvalid = NewError("validation_length_invalid", "the length must be exactly {{.min}}")
 	// ErrLengthOutOfRange is the error that returns in case of out of range length.
-	ErrLengthOutOfRange = NewError("validation_length_out_of_range", "the length must be between {{.min}} and {{.max}}")
+	ErrLengthOutOfRange = NewError(
+		"validation_length_out_of_range",
+		"the length must be between {{.min}} and {{.max}}",
+	)
 	// ErrLengthEmptyRequired is the error that returns in case of non-empty value.
 	ErrLengthEmptyRequired = NewError("validation_length_empty_required", "the value must be empty")
 )

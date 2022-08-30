@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package validation
+package vee
 
 import (
 	"testing"
@@ -11,7 +11,7 @@ import (
 )
 
 func TestIn(t *testing.T) {
-	var v = 1
+	v := 1
 	var v2 *int
 	tests := []struct {
 		tag    string

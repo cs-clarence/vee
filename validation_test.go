@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package validation
+package vee
 
 import (
 	"context"
@@ -17,7 +17,11 @@ func TestValidate(t *testing.T) {
 	slice := []String123{String123("abc"), String123("123"), String123("xyz")}
 	ctxSlice := []Model4{{A: "abc"}, {A: "def"}}
 	mp := map[string]String123{"c": String123("abc"), "b": String123("123"), "a": String123("xyz")}
-	mpCtx := map[string]StringValidateContext{"c": StringValidateContext("abc"), "b": StringValidateContext("123"), "a": StringValidateContext("xyz")}
+	mpCtx := map[string]StringValidateContext{
+		"c": StringValidateContext("abc"),
+		"b": StringValidateContext("123"),
+		"a": StringValidateContext("xyz"),
+	}
 	var (
 		ptr     *string
 		noCtx   StringValidate        = "abc"
@@ -39,7 +43,12 @@ func TestValidate(t *testing.T) {
 		{"t6", &slice, "0: error 123; 2: error 123.", "0: error 123; 2: error 123."},
 		{"t7", ctxSlice, "", "1: (A: error abc.)."},
 		{"t8", mp, "a: error 123; c: error 123.", "a: error 123; c: error 123."},
-		{"t8.1", mpCtx, "a: must be abc; b: must be abc.", "a: must be abc with context; b: must be abc with context."},
+		{
+			"t8.1",
+			mpCtx,
+			"a: must be abc; b: must be abc.",
+			"a: must be abc with context; b: must be abc with context.",
+		},
 		{"t9", &mp, "a: error 123; c: error 123.", "a: error 123; c: error 123."},
 		{"t10", map[string]String123{}, "", ""},
 		{"t11", ptr, "", ""},

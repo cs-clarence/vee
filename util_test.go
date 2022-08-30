@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-package validation
+package vee
 
 import (
 	"database/sql"
@@ -193,7 +193,7 @@ func TestToFloat(t *testing.T) {
 
 func TestIsEmpty(t *testing.T) {
 	var s1 string
-	var s2 = "a"
+	s2 := "a"
 	var s3 *string
 	s4 := struct{}{}
 	time1 := time.Now()
@@ -267,7 +267,7 @@ func TestIsEmpty(t *testing.T) {
 }
 
 func TestIndirect(t *testing.T) {
-	var a = 100
+	a := 100
 	var b *int
 	var c *sql.NullInt64
 
